@@ -8,7 +8,7 @@ import ImageClassifier from '../components/complaint/ImageClassifier';
 import LocationPicker from '../components/complaint/LocationPicker';
 import VoiceInput from '../components/complaint/VoiceInput';
 import DuplicateChecker from '../components/complaint/DuplicateChecker';
-import { CIVIC_CATEGORIES } from '../utils/categories';
+import { CIVIC_CATEGORIES, AP_DEFAULT_LAT, AP_DEFAULT_LNG, AP_DEFAULT_LOCATION } from '../utils/categories';
 import { PlusCircle, Sparkles, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ReportIssuePage() {
@@ -19,9 +19,9 @@ export default function ReportIssuePage() {
   const [category, setCategory] = useState(CIVIC_CATEGORIES[0].name);
   const [description, setDescription] = useState(CIVIC_CATEGORIES[0].defaultDesc);
   const [imageUrl, setImageUrl] = useState('');
-  const [lat, setLat] = useState(40.7128);
-  const [lng, setLng] = useState(-74.0060);
-  const [locationText, setLocationText] = useState('Ward 1 - Central Downtown, Main St');
+  const [lat, setLat] = useState(AP_DEFAULT_LAT);
+  const [lng, setLng] = useState(AP_DEFAULT_LNG);
+  const [locationText, setLocationText] = useState(AP_DEFAULT_LOCATION);
   const [aiPrediction, setAiPrediction] = useState(null);
   const [duplicates, setDuplicates] = useState([]);
   const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);

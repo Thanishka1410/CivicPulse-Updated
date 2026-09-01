@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ComplaintProvider } from './context/ComplaintContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import SplashPage from './pages/SplashPage';
 import LoginPage from './pages/LoginPage';
@@ -28,37 +29,39 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <ComplaintProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<SplashPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <NotificationProvider>
+          <ComplaintProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<SplashPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
 
-              {/* Citizen Routes */}
-              <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-              <Route path="/report" element={<ProtectedRoute><ReportIssuePage /></ProtectedRoute>} />
-              <Route path="/my-complaints" element={<ProtectedRoute><MyComplaintsPage /></ProtectedRoute>} />
-              <Route path="/nearby" element={<ProtectedRoute><NearbyIssuesPage /></ProtectedRoute>} />
-              <Route path="/ai-assistant" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-              <Route path="/points" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                {/* Citizen Routes */}
+                <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+                <Route path="/report" element={<ProtectedRoute><ReportIssuePage /></ProtectedRoute>} />
+                <Route path="/my-complaints" element={<ProtectedRoute><MyComplaintsPage /></ProtectedRoute>} />
+                <Route path="/nearby" element={<ProtectedRoute><NearbyIssuesPage /></ProtectedRoute>} />
+                <Route path="/ai-assistant" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+                <Route path="/points" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
-              {/* Admin Routes */}
-              <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
-              <Route path="/admin/complaints" element={<ProtectedRoute adminOnly={true}><AdminComplaintsPage /></ProtectedRoute>} />
-              <Route path="/admin/analytics" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
-              <Route path="/admin/heatmap" element={<ProtectedRoute adminOnly={true}><AdminHeatmapPage /></ProtectedRoute>} />
-              <Route path="/admin/departments" element={<ProtectedRoute adminOnly={true}><DepartmentPerformancePage /></ProtectedRoute>} />
+                {/* Admin Routes */}
+                <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/complaints" element={<ProtectedRoute adminOnly={true}><AdminComplaintsPage /></ProtectedRoute>} />
+                <Route path="/admin/analytics" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
+                <Route path="/admin/heatmap" element={<ProtectedRoute adminOnly={true}><AdminHeatmapPage /></ProtectedRoute>} />
+                <Route path="/admin/departments" element={<ProtectedRoute adminOnly={true}><DepartmentPerformancePage /></ProtectedRoute>} />
 
-              {/* Catch-all */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Router>
-        </ComplaintProvider>
-      </NotificationProvider>
-    </AuthProvider>
+                {/* Catch-all */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Router>
+          </ComplaintProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -65,10 +65,16 @@ export const STATUS_LABELS = {
   Cancelled: { label: 'Cancelled', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' }
 };
 
+// Andhra Pradesh Municipal Wards
 export const WARDS = [
-  'Ward 1 - Central Downtown',
-  'Ward 2 - Metro East',
-  'Ward 3 - West Riverside',
-  'Ward 4 - North Zone',
-  'Ward 5 - South Industrial'
+  'Vijayawada Central Ward',
+  'Visakhapatnam North Ward',
+  'Tirupati Urban Ward',
+  'Guntur East Ward',
+  'Kakinada Zone Ward'
 ];
+
+// Default Map Center: Andhra Pradesh, India (Vijayawada / Amaravati)
+export const AP_DEFAULT_LAT = 16.5062;
+export const AP_DEFAULT_LNG = 80.6480;
+export const AP_DEFAULT_LOCATION = 'Vijayawada Central Ward, Andhra Pradesh';

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { AP_DEFAULT_LAT, AP_DEFAULT_LNG, AP_DEFAULT_LOCATION } from '../../utils/categories';
 import { MapPin, Locate, CheckCircle, Navigation, Loader2 } from 'lucide-react';
 
 const customIcon = L.icon({
@@ -11,7 +12,6 @@ const customIcon = L.icon({
   popupAnchor: [1, -34]
 });
 
-// OpenStreetMap Nominatim Reverse Geocoding Helper
 export async function reverseGeocodeAddress(lat, lng) {
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
@@ -24,7 +24,7 @@ export async function reverseGeocodeAddress(lat, lng) {
       const road = addr.road || addr.street || addr.pedestrian || '';
       const area = addr.village || addr.suburb || addr.neighbourhood || addr.residential || addr.town || addr.city_district || '';
       const city = addr.city || addr.county || addr.state_district || '';
-      const state = addr.state || '';
+      const state = addr.state || 'Andhra Pradesh';
       const postcode = addr.postcode || '';
 
       const parts = [road, area, city, state, postcode].filter(Boolean);
@@ -41,10 +41,10 @@ export async function reverseGeocodeAddress(lat, lng) {
     console.warn("Reverse geocoding error:", err);
   }
   return {
-    road: 'Main Street',
-    area: 'Central Zone',
-    city: 'City Metro',
-    fullAddress: `Street & Village Area (Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)})`
+    road: 'Central Main Road',
+    area: 'Vijayawada Central Ward',
+    city: 'Andhra Pradesh',
+    fullAddress: `Vijayawada Central Ward, Andhra Pradesh (Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)})`
   };
 }
 
@@ -62,15 +62,15 @@ function LocationMarker({ position, setPosition, onLocationChange }) {
   );
 }
 
-export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.0060, onChange }) {
+export default function LocationPicker({ defaultLat = AP_DEFAULT_LAT, defaultLng = AP_DEFAULT_LNG, onChange }) {
   const [position, setPosition] = useState([defaultLat, defaultLng]);
   const [locating, setLocating] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [addressDetails, setAddressDetails] = useState({
-    road: 'Main Street',
-    area: 'Central Ward',
-    city: 'Metro City',
-    fullAddress: 'Main Street, Central Ward, Ward 1 - Central Downtown'
+    road: 'MG Road',
+    area: 'Vijayawada Central Ward',
+    city: 'Andhra Pradesh',
+    fullAddress: AP_DEFAULT_LOCATION
   });
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.
         await fetchAddressAndNotify(lat, lng);
       },
       async (err) => {
-        console.warn("Geolocation fallback:", err.message);
+        console.warn("Geolocation fallback to Andhra Pradesh default:", err.message);
         setLocating(false);
         setPosition([defaultLat, defaultLng]);
         await fetchAddressAndNotify(defaultLat, defaultLng);
@@ -114,8 +114,8 @@ export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <Navigation className="w-4 h-4 text-teal-400" /> Verify Location (OpenStreetMap Reverse Geocoding)
+        <label className="text-xs font-semibold text-slate-300 light:text-slate-700 flex items-center gap-1.5">
+          <Navigation className="w-4 h-4 text-teal-400" /> Location Verification (Andhra Pradesh, India)
         </label>
         <button
           type="button"
@@ -129,10 +129,10 @@ export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.
       </div>
 
       {/* Map Window */}
-      <div className="h-56 w-full rounded-xl border border-slate-800 overflow-hidden relative shadow-inner">
+      <div className="h-56 w-full rounded-xl border border-slate-800 light:border-slate-300 overflow-hidden relative shadow-inner">
         <MapContainer
           center={position}
-          zoom={14}
+          zoom={13}
           scrollWheelZoom={false}
           style={{ height: '100%', width: '100%' }}
         >
@@ -149,14 +149,14 @@ export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.
       </div>
 
       {/* Structured Address Verification Display */}
-      <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2 text-xs">
+      <div className="p-3 bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-200 rounded-xl space-y-2 text-xs">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-slate-200 flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-teal-400" /> Approachable Street & Village Address:
+          <span className="font-bold text-slate-200 light:text-slate-800 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-teal-400" /> Street & Village Address:
           </span>
           {isGeocoding ? (
             <span className="text-[10px] text-amber-400 flex items-center gap-1 font-mono">
-              <Loader2 className="w-3 h-3 animate-spin" /> Resolving Street Name...
+              <Loader2 className="w-3 h-3 animate-spin" /> Resolving Address...
             </span>
           ) : (
             <span className="text-emerald-400 font-bold text-[10px] flex items-center gap-1">
@@ -166,7 +166,7 @@ export default function LocationPicker({ defaultLat = 40.7128, defaultLng = -74.
         </div>
 
         {/* Formatted Address Result Box */}
-        <div className="p-2.5 bg-slate-950 border border-slate-800/80 rounded-lg text-slate-100 font-medium leading-relaxed">
+        <div className="p-2.5 bg-slate-950 light:bg-white border border-slate-800/80 light:border-slate-300 rounded-lg text-slate-100 light:text-slate-900 font-medium leading-relaxed shadow-sm">
           {addressDetails.fullAddress}
         </div>
 

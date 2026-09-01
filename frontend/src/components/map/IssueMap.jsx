@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { STATUS_LABELS } from '../../utils/categories';
+import { STATUS_LABELS, AP_DEFAULT_LAT, AP_DEFAULT_LNG } from '../../utils/categories';
 import { MapPin, Calendar, CheckCircle2, Filter } from 'lucide-react';
 
-// Custom icons based on category
 const createCategoryIcon = (color = '#3b82f6') => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="28" height="28" stroke="#ffffff" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="#ffffff"/></svg>`;
   return L.divIcon({
@@ -27,7 +26,7 @@ export default function IssueMap({ complaints = [] }) {
 
   const center = complaints.length > 0
     ? [complaints[0].latitude, complaints[0].longitude]
-    : [40.7128, -74.0060];
+    : [AP_DEFAULT_LAT, AP_DEFAULT_LNG];
 
   return (
     <div className="space-y-4">

@@ -1,11 +1,11 @@
-import React from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { AP_DEFAULT_LAT, AP_DEFAULT_LNG } from '../../utils/categories';
 import { Flame, AlertTriangle } from 'lucide-react';
 
 export default function HeatmapLayer({ complaints = [] }) {
   const center = complaints.length > 0
     ? [complaints[0].latitude, complaints[0].longitude]
-    : [40.7128, -74.0060];
+    : [AP_DEFAULT_LAT, AP_DEFAULT_LNG];
 
   return (
     <div className="space-y-4">
