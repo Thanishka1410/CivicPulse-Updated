@@ -28,7 +28,7 @@ export default function SignupPage() {
     }
 
     if (role === 'admin' && secretCode.trim() !== 'HackWarriors') {
-      setError('Invalid Admin Secret Code! Required for demo: HackWarriors');
+      setError('Invalid Admin Authorization Secret Code!');
       return;
     }
 
@@ -167,7 +167,7 @@ export default function SignupPage() {
               <div>
                 <label className="block font-semibold text-teal-300 mb-1 flex items-center justify-between">
                   <span>Secret Code (Required for Admin)</span>
-                  <span className="text-[10px] text-teal-400 font-mono">Demo: HackWarriors</span>
+                  <span className="text-[10px] text-teal-400 font-mono">Authorization Code</span>
                 </label>
                 <div className="relative">
                   <Key className="w-4 h-4 text-teal-400 absolute left-3.5 top-3" />

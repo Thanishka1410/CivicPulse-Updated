@@ -54,7 +54,7 @@ export default function Splash({ onFinish }) {
         </div>
 
         <p className="text-xs text-slate-500 font-mono">
-          AI Crowdsourced Civic Governance Prototype
+          AI Crowdsourced Civic Governance Platform
         </p>
       </div>
 

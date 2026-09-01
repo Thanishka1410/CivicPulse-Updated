@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, Mail, Lock, LogIn, ArrowRight, ShieldCheck, UserCheck, AlertCircle } from 'lucide-react';
+import { Activity, Mail, Lock, LogIn, ShieldCheck, UserCheck, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -30,7 +30,7 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemo = (role) => {
+  const fillQuickAccess = (role) => {
     if (role === 'admin') {
       setEmail('admin@civicpulse.org');
       setPassword('admin123');
@@ -86,7 +86,7 @@ export default function LoginPage() {
               <label className="text-xs font-semibold text-slate-300">Password</label>
               <button
                 type="button"
-                onClick={() => alert("For prototype demo: enter any password or use 1-click Demo Logins below!")}
+                onClick={() => alert("Enter your registered email and password to log in.")}
                 className="text-[11px] text-sky-400 hover:underline"
               >
                 Forgot password?
@@ -115,25 +115,25 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo Fast Login Shortcuts */}
+        {/* Quick Portal Access Shortcuts */}
         <div className="pt-4 border-t border-slate-800/80 space-y-2">
           <p className="text-[10px] font-mono text-center text-slate-500 uppercase tracking-widest">
-            Student Prototype Quick Demo Logins
+            Quick Portal Access
           </p>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => fillDemo('citizen')}
+              onClick={() => fillQuickAccess('citizen')}
               className="py-2 px-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-semibold text-sky-400 flex items-center justify-center gap-1.5 transition-colors"
             >
-              <UserCheck className="w-3.5 h-3.5" /> Citizen Demo
+              <UserCheck className="w-3.5 h-3.5" /> Citizen Portal
             </button>
             <button
               type="button"
-              onClick={() => fillDemo('admin')}
+              onClick={() => fillQuickAccess('admin')}
               className="py-2 px-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-semibold text-teal-400 flex items-center justify-center gap-1.5 transition-colors"
             >
-              <ShieldCheck className="w-3.5 h-3.5" /> Admin Demo
+              <ShieldCheck className="w-3.5 h-3.5" /> Admin Portal
             </button>
           </div>
         </div>
