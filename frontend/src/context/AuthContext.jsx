@@ -17,18 +17,20 @@ export function AuthProvider({ children }) {
         uid: 'user_citizen_1',
         name: 'John Doe',
         email: 'citizen@civicpulse.org',
+        password: 'citizen123',
         role: 'citizen',
         points: 250,
-        assignedLocation: 'Ward 1 - Central Downtown',
+        assignedLocation: 'Vijayawada Central Ward',
         createdAt: new Date().toISOString()
       },
       {
         uid: 'admin_user_99',
         name: 'Admin Officer',
         email: 'admin@civicpulse.org',
+        password: 'admin123',
         role: 'admin',
         points: 0,
-        assignedLocation: 'Ward 1 - Central Downtown',
+        assignedLocation: 'Vijayawada Central Ward',
         createdAt: new Date().toISOString()
       }
     ];
@@ -86,13 +88,20 @@ export function AuthProvider({ children }) {
       }
     }
 
+    // Check if email already registered
+    const existing = userDb.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (existing) {
+      throw new Error('An account with this email address already exists. Please log in.');
+    }
+
     const userData = {
       uid: 'user_' + Date.now(),
       name,
       email,
+      password, // Stored for verification
       role: role || 'citizen',
       points: role === 'admin' ? 0 : 100,
-      assignedLocation: role === 'admin' ? (assignedLocation || 'Ward 1 - Central Downtown') : '',
+      assignedLocation: role === 'admin' ? (assignedLocation || 'Vijayawada Central Ward') : '',
       createdAt: new Date().toISOString()
     };
 
@@ -107,19 +116,19 @@ export function AuthProvider({ children }) {
         }
       } catch (fbErr) {
         if (fbErr.code === 'auth/configuration-not-found') {
-          console.warn("⚠️ Firebase Email/Password Auth is not enabled in Firebase Console. Registering in prototype database.");
+          console.warn("⚠️ Firebase Email/Password Auth is not enabled in Firebase Console. Registering in local database.");
         } else {
           throw fbErr;
         }
       }
     }
 
-    // Save to user database
-    setUserDb(prev => [userData, ...prev.filter(u => u.email.toLowerCase() !== email.toLowerCase())]);
+    // Save user to database
+    setUserDb(prev => [userData, ...prev]);
     return userData;
   };
 
-  // Login Handler
+  // Strict Login Handler (Requires existing account + correct password)
   const login = async (email, password) => {
     if (isRealFirebase && auth) {
       try {
@@ -138,7 +147,7 @@ export function AuthProvider({ children }) {
         if (fbErr.code === 'auth/configuration-not-found') {
           console.warn("⚠️ Firebase Auth fallback to prototype database.");
         } else if (fbErr.code === 'auth/invalid-credential' || fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/wrong-password') {
-          throw new Error('Invalid email or password in Firebase.');
+          throw new Error('Invalid email or password.');
         }
       }
     }
@@ -146,28 +155,17 @@ export function AuthProvider({ children }) {
     // Lookup in local user database
     const matched = userDb.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-    if (matched) {
-      setCurrentUser(matched);
-      return matched;
+    if (!matched) {
+      throw new Error('No account found with this email address. Please Sign Up first!');
     }
 
-    // If logging in with a new email not in db yet, create profile using their email name prefix
-    const isEmpAdmin = email.toLowerCase().includes('admin');
-    const inferredName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    // Verify Password
+    if (matched.password && matched.password !== password) {
+      throw new Error('Incorrect password. Please check your password and try again.');
+    }
 
-    const fallbackUser = {
-      uid: 'user_' + Date.now(),
-      name: inferredName || (isEmpAdmin ? 'Admin Inspector' : 'Citizen User'),
-      email,
-      role: isEmpAdmin ? 'admin' : 'citizen',
-      points: isEmpAdmin ? 0 : 100,
-      assignedLocation: isEmpAdmin ? 'Ward 1 - Central Downtown' : '',
-      createdAt: new Date().toISOString()
-    };
-
-    setUserDb(prev => [fallbackUser, ...prev]);
-    setCurrentUser(fallbackUser);
-    return fallbackUser;
+    setCurrentUser(matched);
+    return matched;
   };
 
   // Logout Handler
