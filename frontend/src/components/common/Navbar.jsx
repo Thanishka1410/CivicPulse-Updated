@@ -1,45 +1,103 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { useTheme } from '../../context/ThemeContext';
-import { Activity, Bell, Award, User, LogOut, Check, Sun, Moon } from 'lucide-react';
+import {
+  Activity,
+  Bell,
+  Award,
+  User,
+  LogOut,
+  Check,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  LayoutDashboard,
+  PlusCircle,
+  FileText,
+  MapPin,
+  Bot,
+  Shield,
+  BarChart3,
+  Flame,
+  Building2,
+  ListFilter
+} from 'lucide-react';
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { theme, toggleTheme } = useTheme();
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const isAdmin = currentUser?.role === 'admin';
+
+  const citizenLinks = [
+    { to: '/dashboard', label: 'User Dashboard', icon: LayoutDashboard },
+    { to: '/report', label: 'Report Issue', icon: PlusCircle, highlight: true },
+    { to: '/my-complaints', label: 'My Complaints', icon: FileText },
+    { to: '/nearby', label: 'Nearby Issues', icon: MapPin },
+    { to: '/ai-assistant', label: 'AI Assistant', icon: Bot },
+    { to: '/points', label: 'Civic Rewards', icon: Award },
+    { to: '/profile', label: 'Profile', icon: User }
+  ];
+
+  const adminLinks = [
+    { to: '/admin', label: 'Dashboard Overview', icon: LayoutDashboard },
+    { to: '/admin/complaints', label: 'Manage Complaints', icon: ListFilter },
+    { to: '/nearby', label: 'Live Issue Map', icon: MapPin },
+    { to: '/admin/heatmap', label: 'Issue Hotspot Heatmap', icon: Flame },
+    { to: '/admin/analytics', label: 'Governance Analytics', icon: BarChart3 },
+    { to: '/admin/departments', label: 'Department Performance', icon: Building2 },
+    { to: '/profile', label: 'Admin Profile', icon: Shield }
+  ];
+
+  const links = isAdmin ? adminLinks : citizenLinks;
+
   return (
     <header className="sticky top-0 z-40 bg-slate-950/90 dark:bg-slate-950/90 light:bg-white/90 backdrop-blur-md border-b border-slate-800/80 light:border-slate-200 px-4 lg:px-8 py-3 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
-        {/* Brand Logo */}
-        <Link to={currentUser?.role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-teal-400 p-0.5 shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-slate-950 dark:bg-slate-950 light:bg-white rounded-[10px] flex items-center justify-center">
-              <Activity className="w-5 h-5 text-sky-400" />
+        {/* Brand Logo & Mobile Menu Toggle */}
+        <div className="flex items-center gap-3">
+          {currentUser && (
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden p-2 rounded-xl bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-300 text-slate-300 light:text-slate-700"
+            >
+              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          )}
+
+          <Link to={currentUser?.role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-teal-400 p-0.5 shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full bg-slate-950 dark:bg-slate-950 light:bg-white rounded-[10px] flex items-center justify-center">
+                <Activity className="w-5 h-5 text-sky-400" />
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-extrabold tracking-tight text-white light:text-slate-900">CivicPulse</span>
-              {currentUser?.role === 'admin' && (
-                <span className="text-[10px] font-bold bg-sky-500/20 text-sky-400 border border-sky-500/40 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                  Admin
-                </span>
-              )}
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xl font-extrabold tracking-tight text-white light:text-slate-900">CivicPulse</span>
+                {currentUser?.role === 'admin' && (
+                  <span className="text-[10px] font-bold bg-sky-500/20 text-sky-400 border border-sky-500/40 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    Admin
+                  </span>
+                )}
+              </div>
+              <p className="text-[10px] text-teal-400 font-medium tracking-wide">Report. Track. Resolve.</p>
             </div>
-            <p className="text-[10px] text-teal-400 font-medium tracking-wide">Report. Track. Resolve.</p>
-          </div>
-        </Link>
+          </Link>
+        </div>
 
         {/* Right Section Actions */}
         <div className="flex items-center gap-3">
@@ -51,7 +109,7 @@ export default function Navbar() {
             className="p-2 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-slate-100 border border-slate-800 light:border-slate-300 text-slate-300 light:text-slate-700 hover:text-sky-400 transition-all"
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400 animate-spin-slow" /> : <Moon className="w-5 h-5 text-sky-600" />}
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-sky-600" />}
           </button>
 
           {currentUser ? (
@@ -116,7 +174,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Profile */}
+              {/* Profile Link */}
               <div className="flex items-center gap-2 pl-2 border-l border-slate-800 light:border-slate-300">
                 <Link to="/profile" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                   <div className="w-8 h-8 rounded-full bg-slate-800 light:bg-slate-200 border border-slate-700 light:border-slate-300 flex items-center justify-center text-sky-400 light:text-sky-600 font-bold text-xs">
@@ -152,6 +210,31 @@ export default function Navbar() {
         </div>
 
       </div>
+
+      {/* Mobile Navigation Drawer Dropdown */}
+      {showMobileMenu && currentUser && (
+        <div className="md:hidden mt-3 pt-3 border-t border-slate-800 light:border-slate-200 space-y-1">
+          {links.map((link) => {
+            const Icon = link.icon;
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setShowMobileMenu(false)}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-sky-600/20 text-sky-400 border border-sky-500/30'
+                    : 'text-slate-300 light:text-slate-700 hover:bg-slate-900 light:hover:bg-slate-100'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </header>
   );
 }
